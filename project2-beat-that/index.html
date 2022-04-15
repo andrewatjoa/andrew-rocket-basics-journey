@@ -60,17 +60,22 @@ The <html> element is known as the root element of a HTML page. All other elemen
       </ul>
     </nav>
     <!-- The <h1> element defines a large heading. There are 6 pre-set header elements, <h1> to <h6> -->
-    <h1 id="header">🚀 Basics Project 2: Beat That! 🚀</h1>
+    <h1 id="header">Basics Project 2: <br />🎲 Beat That! 🎲</h1>
     <!-- The <div> tag defines a division or a section in an HTML document, and is commonly use as a "container" for nested HTML elements. -->
     <div class="container">
-      <!-- The <p> tag defines a paragraph element. -->
-      <p>Input:</p>
-      <!-- The self-closing <input /> tag represents a field for a user to enter input. -->
-      <input id="input-field" />
-      <!-- The self-closing <br /> tag represents a line break - a line's worth of spacing before dispalying the next element. -->
-      <br />
+      <p>
+        Welcome to Andrew's Beat That!. <br />
+        This is a fully automated game where two players will take turns to
+        click the submit button to roll two dice. The program will automatically
+        generate the highest combination from the two dice rolled as your score.
+        <br /><br />
+        Please click on the submit button to start the game!
+
+        <!-- The <p> tag defines a paragraph element. -->
+      </p>
+
       <!-- The <button> tag represents.. you guessed it! a button. -->
-      <button id="submit-button">Submit</button>
+      <button id="submit-button">Click to Play</button>
       <p>Output:</p>
       <div class="output-div" id="output-div"></div>
     </div>
@@ -85,17 +90,12 @@ The <html> element is known as the root element of a HTML page. All other elemen
       // When the submit button is clicked, access the text entered by the user in the input field
       // And pass it as an input parameter to the main function as defined in script.js
       button.addEventListener("click", function () {
-        // Set result to input value
-        var input = document.querySelector("#input-field");
         // Store the output of main() in a new variable
-        var result = main(input.value);
+        var result = main();
 
         // Display result in output element
         var output = document.querySelector("#output-div");
         output.innerHTML = result;
-
-        // Reset input value
-        input.value = "";
       });
     </script>
   </body>
