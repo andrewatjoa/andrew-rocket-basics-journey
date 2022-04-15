@@ -1,5 +1,6 @@
 // Global Variables to set initial game states
-
+const spsNormalMode = `sps normal mode`;
+const spsReverseMode = `sps reverse mode`;
 var currentGameMode = `waiting for user name`;
 
 // Create a global variable called User Name: ask user to enter user name
@@ -88,7 +89,19 @@ var winConditionReverseMode = function (playerThrow, computerThrow) {
   );
 };
 
-var myOutputValue = ``;
+var genOutputPrefix = function (playerThrows, computerPlayed) {
+  var playerEmoji = genSPSEmoji(playerThrows);
+  var computerEmoji = genSPSEmoji(computerPlayed);
+  return `${userName} threw: ${playerThrows} ${playerEmoji} <br> Computer played: ${computerPlayed} ${computerEmoji} <br><br>`;
+};
+
+var genOutputSuffix = function () {
+  if (currentGameMode == spsNormalMode) {
+    return `Please input scissors, paper, and stone to continue playing! <br><br>`;
+  } else {
+    return `Please input reversed paper, reversed scissors, and reversed stone to continue playing! <br><br>`;
+  }
+};
 
 var main = function (input) {
   // Create a game mode for users to enter their user name and invite them to choose a game mode as an output.
@@ -136,17 +149,16 @@ var main = function (input) {
       return `Please input either "1" or "2" to choose a game mode`;
     }
   }
+  var playerThrows = input;
+  var computerPlayed = genSPSRandom();
+  console.log("The computer played", computerPlayed);
+  var outputPrefix = genOutputPrefix(playerThrows, computerPlayed);
+  var outputSuffix = genOutputSuffix();
+
   console.log("The current game mode is ", currentGameMode);
   if (currentGameMode == `sps normal mode`) {
     console.log("The current game is ", currentGameMode);
     console.log("The current number of games played is:", numGamesPlayed);
-
-    var playerThrows = input;
-
-    var computerPlayed = genSPSRandom();
-    console.log("The computer played", computerPlayed);
-    var playerEmoji = genSPSEmoji(input);
-    var computerEmoji = genSPSEmoji(computerPlayed);
 
     // Validate input: if input is not scissors, paper or stone, instruct user to type in scissors, paper or stone to play the game.
     if (
@@ -162,7 +174,7 @@ var main = function (input) {
     if (drawCondition(playerThrows, computerPlayed)) {
       numGamesDrawn += 1;
       var currentWinRate = getWinRateInfo();
-      return `${userName} threw: ${playerThrows} ${playerEmoji} <br> Computer played: ${computerPlayed} ${computerEmoji} <br><br> It's a draw! 🤝 <br> Please input scissors, paper, and stone to continue playing! <br><br> Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
+      return `${outputPrefix} It's a draw! 🤝 <br> ${outputSuffix} Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
     }
 
     // Check if the game results in the user winning
@@ -170,12 +182,12 @@ var main = function (input) {
       numGamesWon += 1;
       console.log("Your current number of games won is:", numGamesWon);
       currentWinRate = getWinRateInfo();
-      return `${userName} threw: ${playerThrows} ${playerEmoji} <br> Computer played: ${computerPlayed} ${computerEmoji} <br><br> You won! Congratulations! 🎉 <br> Please input scissors, paper, and stone to continue playing! <br><br> Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
+      return `${outputPrefix} Congratulations! 🎉 <br> You won! ${outputSuffix} Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
     }
     // If it's neither a win nor a draw, it's a loss.
     else numGamesLost += 1;
     currentWinRate = getWinRateInfo();
-    return `${userName} threw: ${playerThrows} ${playerEmoji} <br> Computer played: ${computerPlayed} ${computerEmoji} <br><br> You lost! 😭  Better luck next time! <br> Please input scissors, paper, and stone to continue playing! <br><br> Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
+    return `${outputPrefix} You lost! 😭  Better luck next time! <br> ${outputSuffix} Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
   }
 
   // Check if the user chooses the reverse mode, and define the game logic
@@ -189,6 +201,7 @@ var main = function (input) {
     console.log("The computer played", computerPlayed);
     playerEmoji = genSPSEmoji(input);
     computerEmoji = genSPSEmoji(computerPlayed);
+    outputPrefix = genOutputPrefix(playerThrows, computerPlayed);
 
     // Validate input: if input is not scissors, paper or stone, instruct user to type in scissors, paper or stone to play the game.
 
@@ -205,7 +218,8 @@ var main = function (input) {
     if (drawCondition(playerThrows, computerPlayed)) {
       numGamesDrawn += 1;
       currentWinRate = getWinRateInfo();
-      return `${userName} threw: ${playerThrows} ${playerEmoji} <br> Computer played: ${computerPlayed} ${computerEmoji} <br><br> It's a draw! 🤝 <br> Please input reversed paper, reversed scissors, and reversed stone to continue playing! <br><br> Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
+
+      return `${outputPrefix} It's a draw! 🤝 <br> ${outputSuffix} Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
     }
 
     // Check if the game results in the user winning
@@ -213,11 +227,11 @@ var main = function (input) {
       numGamesWon += 1;
       currentWinRate = getWinRateInfo();
       console.log("Your current number of games won is:", numGamesWon);
-      return `${userName} threw: ${playerThrows} ${playerEmoji} <br> Computer played: ${computerPlayed} ${computerEmoji} <br><br> You won! Congratulations! 🎉  <br> Please input reversed paper, reversed scissors, and reversed stone to continue playing! <br><br> Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
+      return `${outputPrefix} You won! Congratulations! 🎉  <br> ${outputSuffix} Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
     }
     // If it's neither a win or a draw, then it's a loss.
     else numGamesLost += 1;
     currentWinRate = getWinRateInfo();
-    return `${userName} threw: ${playerThrows} ${playerEmoji} <br> Computer played: ${computerPlayed} ${computerEmoji} <br><br> You lost! 😭  Better luck next time! <br> Please input reversed paper, reversed scissors, and reversed stone to continue playing! <br><br> Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
+    return `${outputPrefix} You lost! 😭  Better luck next time! <br> ${outputSuffix} Your current win/loss record is: <br> ${userName} won: ${numGamesWon} times. <br> Computer won:  ${numGamesLost} times. <br> You both drew: ${numGamesDrawn} times. <br> ${currentWinRate}`;
   }
 };

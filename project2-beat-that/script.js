@@ -1,7 +1,7 @@
 // Declaring global variables that determines game state
 
 const gameStateDiceRoll = `game state dice roll`;
-const gameStateChooseDiceOrder = `game state choose dice order`;
+const gameStateGenPlayerScore = `game state gen player score`;
 const gameStateCompareScores = `game state compare scores`;
 var gameState = gameStateDiceRoll;
 
@@ -39,86 +39,84 @@ var rollDiceForPlayer = function () {
     `rollDiceForPlayer changes, currentPlayerRolls: `,
     currentPlayerRolls
   );
-  return `Welcome, Player ${currentPlayer}! <br><br> You rolled: <br> Dice 1: ${currentPlayerRolls[0]} <br> Dice 2: ${currentPlayerRolls[1]} <br><br> Now, please input either '1' or '2' to choose the corresponding dice to be used as the first digit of your final value.`;
+
+  return `Welcome, Player ${currentPlayer}! <br><br> You rolled: <br> Dice 1: ${currentPlayerRolls[0]} <br> Dice 2: ${currentPlayerRolls[1]} <br><br> Click submit to automatically generate high score.`;
 };
 
-var getPlayerScore = function (playerInput) {
-  var playerScore;
-  // input validation
-  if (playerInput != 1 && playerInput != 2) {
-    return `Error! Please only input "1" or "2" to choose which dice to use as the first digit. <br><br> Your dice rolls are: <br> Dice 1: ${currentPlayerRolls[0]} <br> Dice 2: ${currentPlayerRolls[1]}`;
-  }
-  // if player input "1"
-  if (playerInput == 1) {
-    console.log(`Control flow: input == 1`);
-
-    playerScore = Number(
+var getPlayerScore = function () {
+  var autoGenPlayerScore;
+  // if dice 1 is greater than dice 2, concantenate dice 1 and dice 2, dice 1 in front.
+  if (currentPlayerRolls[0] > currentPlayerRolls[1]) {
+    autoGenPlayerScore = Number(
       String(currentPlayerRolls[0]) + String(currentPlayerRolls[1])
     );
-    console.log(`current player score is: `, playerScore);
-  }
-  // if player input "2"
-  if (playerInput == 2) {
-    console.log(`Control flow: input == 2`);
-    playerScore = Number(
+  } else if (currentPlayerRolls[1] > currentPlayerRolls[0]) {
+    autoGenPlayerScore = Number(
       String(currentPlayerRolls[1]) + String(currentPlayerRolls[0])
     );
-    console.log(`current playerScore is: `, playerScore);
+  } else {
+    autoGenPlayerScore = Number(
+      String(currentPlayerRolls[0]) + String(currentPlayerRolls[1])
+    );
   }
   // Store playerScore in array
-  allPlayersScore[currentPlayer - 1] += playerScore;
+  allPlayersScore[currentPlayer - 1] += autoGenPlayerScore;
+
   //Clear current player rolls array
   currentPlayerRolls = [];
-  return `Player ${currentPlayer}, Your chosen value is: ${playerScore}.`;
+
+  // if dice 2 is greater than dice 1, concatenate dice 2 and dice 1, dice 2 in front
+
+  // return welcome message and current player score
+
+  return `Player ${currentPlayer}, Your chosen value is: ${autoGenPlayerScore}.`;
 };
 
-var comparePlayerScores = function () {
-  var compareMessage = `Player 1 scores: ${allPlayersScore[0]} <br> Player 2 scores: ${allPlayersScore[1]}`;
-  console.log(allPlayersScore);
-  // player 1 wins
+var getLeaderboardInfo = function () {
+  var leaderBoardHeader = `🏆 Leaderboard: 🏆 <br><br>`;
+  var leaderBoardFooter = `Player 1, please press submit to roll two dice.`;
+  var leaderBoardMessage = "";
+  var scoreDifference = Math.abs(allPlayersScore[0] - allPlayersScore[1]);
+  // if player 1 score is higher than player 2
   if (allPlayersScore[0] > allPlayersScore[1]) {
-    compareMessage = `${compareMessage} <br> <br> Player 1 wins!`;
+    console.log(`Control flow: Player 1 score is higher than Player 2's.`);
+    leaderBoardMessage = `${leaderBoardHeader} Player 1 scores: ${allPlayersScore[0]} <br> Player 2 scores: ${allPlayersScore[1]} <br><br> Player 1 is leading. <br> Player 2 needs ${scoreDifference} points to catch up. <br><br> ${leaderBoardFooter}`;
+  } else if (allPlayersScore[0] < allPlayersScore[1]) {
+    console.log(`Control flow: Player 2 score is higher than Player 1's.`);
+    leaderBoardMessage = `${leaderBoardHeader} Player 2 scores: ${allPlayersScore[1]} <br> Player 1 scores: ${allPlayersScore[0]} <br><br> Player 2 is leading. <br> Player 1 needs ${scoreDifference} points to catch up. <br><br> ${leaderBoardFooter}`;
+  } else {
+    console.log(`Control flow: Both player scores are the same.`);
+    leaderBoardMessage = `${leaderBoardHeader} Player 1 scores: ${allPlayersScore[0]} <br> Player 2 scores: ${allPlayersScore[1]}.<br> It's a tie! <br><br> ${leaderBoardFooter}`;
   }
-  // player 2 wins
-  if (allPlayersScore[0] < allPlayersScore[1]) {
-    compareMessage = `${compareMessage} <br> <br> Player 2 wins!`;
-  }
-  // tie
-  if (allPlayersScore[0] == allPlayersScore[1]) {
-    compareMessage = `${compareMessage} <br> <br> It's a tie!`;
-  }
-  return compareMessage;
+  return leaderBoardMessage;
 };
 
-var main = function (input) {
+var main = function () {
   console.log(
     `Checking game state when the submit button is clicked: `,
     gameState
   );
   console.log(`Checking currentPlayer on submit click: `, currentPlayer);
   var myOutputValue = "";
-  if (gameState == gameStateDiceRoll) {
+  if (gameState === gameStateDiceRoll) {
     console.log(`Control flow: gameState == gameStateDiceRoll`);
     // Change the game state
-    gameState = gameStateChooseDiceOrder;
+    gameState = gameStateGenPlayerScore;
     return rollDiceForPlayer();
   }
 
-  if (gameState == gameStateChooseDiceOrder) {
+  if (gameState === gameStateGenPlayerScore) {
     console.log(`Control flow: gameState == gameStateChooseDiceOrder`);
 
     // Call playerScore function
-    myOutputValue = getPlayerScore(input);
-
-    if (input != 1 && input != 2) {
-      return `Error! Please only input "1" or "2" to choose which dice to use as the first digit. <br><br> Your dice rolls are: <br> Dice 1: ${currentPlayerRolls[0]} <br> Dice 2: ${currentPlayerRolls[1]}`;
-    } else if (currentPlayer == 1) {
+    myOutputValue = getPlayerScore();
+    if (currentPlayer == 1) {
       console.log(
         `Control flow: end of player 1's turn, now it's player 2's turn.`
       );
       currentPlayer = 2;
       gameState = gameStateDiceRoll;
-      return `${myOutputValue} <br><br> It is now player 2's turn!"`;
+      return `${myOutputValue} <br><br> It is now player 2's turn!" <br> Player 2, please press submit to roll two dice.`;
     } else if (currentPlayer == 2) {
       console.log(
         `Control flow: end of player 2's turn. Next, submit click will calculate score`
@@ -129,11 +127,11 @@ var main = function (input) {
     }
   }
 
-  if (gameState == gameStateCompareScores) {
+  if (gameState === gameStateCompareScores) {
     console.log(`Control flow: gameState == gameStateCompareScores`);
     console.log(`The current allPlayerScores array is `, allPlayersScore);
 
-    var outputMessage = comparePlayerScores();
+    var outputMessage = getLeaderboardInfo();
 
     resetGame();
     console.log(`Current player after reset: `, currentPlayer);
